@@ -102,8 +102,8 @@ export default function BracketProjection({ projection }: BracketProjectionProps
   return (
     <div>
       {/* Champion hero */}
-      <div className="bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/40 rounded-xl p-5 mb-8 text-center">
-        <div className="text-amber-400 text-xs font-bold uppercase tracking-widest mb-1">Projected Champion</div>
+      <div className="bg-slate-800 border border-slate-700 rounded-xl p-5 mb-8 text-center">
+        <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Projected Champion</div>
         <div className="text-white text-3xl font-bold mb-1">
           ({champion.seed}) {champion.name}
         </div>
@@ -111,7 +111,7 @@ export default function BracketProjection({ projection }: BracketProjectionProps
           <div className="text-slate-400 text-sm">AdjEM {champion.adjEM.toFixed(1)}</div>
         )}
         {championship.hasData && (
-          <div className="text-amber-400 text-xs mt-2">
+          <div className="text-slate-400 text-xs mt-2">
             Championship margin: +{championship.margin.toFixed(1)} over ({championship.loser.seed}) {championship.loser.name}
           </div>
         )}
