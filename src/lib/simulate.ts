@@ -4,8 +4,17 @@ import { ProjectedTeam, ProjectedGame, RegionProjection, TournamentProjection } 
 
 function makeTeam(name: string, seed: number): ProjectedTeam {
   const stats = getTeam(name);
-  return { name, seed, adjEM: stats?.adjEM ?? null };
+  return {
+    name,
+    seed,
+    adjEM: stats?.adjEM ?? null,
+    luck: stats?.luck ?? null,
+    adjT: stats?.adjT ?? null,
+  };
 }
+
+// Keep margin multipliers consistent with predict.ts
+const LUCK_MULT = 25;
 
 function simulateGame(t1: ProjectedTeam, t2: ProjectedTeam): ProjectedGame {
   const hasData = t1.adjEM !== null && t2.adjEM !== null;
@@ -14,7 +23,11 @@ function simulateGame(t1: ProjectedTeam, t2: ProjectedTeam): ProjectedGame {
   let margin = 0;
 
   if (t1.adjEM !== null && t2.adjEM !== null) {
-    const diff = t1.adjEM - t2.adjEM;
+    // Apply same luck adjustment and tempo-scaling as predict.ts
+    const em1 = t1.adjEM - (t1.luck ?? 0) * LUCK_MULT;
+    const em2 = t2.adjEM - (t2.luck ?? 0) * LUCK_MULT;
+    const avgT = ((t1.adjT ?? 67) + (t2.adjT ?? 67)) / 2;
+    const diff = (em1 - em2) * avgT / 100;
     if (diff >= 0) {
       winner = t1; loser = t2; margin = diff;
     } else {

@@ -2,6 +2,8 @@ export interface ProjectedTeam {
   name: string;
   seed: number;
   adjEM: number | null;
+  luck: number | null;
+  adjT: number | null;
 }
 
 export interface ProjectedGame {
@@ -9,7 +11,7 @@ export interface ProjectedGame {
   team2: ProjectedTeam;
   winner: ProjectedTeam;
   loser: ProjectedTeam;
-  margin: number; // AdjEM difference, 0 if data missing
+  margin: number; // tempo-scaled, luck-adjusted point margin; 0 if data missing
   hasData: boolean; // true only if both teams have AdjEM
 }
 
