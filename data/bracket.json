@@ -1,0 +1,44 @@
+{
+  "regions": {
+    "East": [
+      { "seed1": 1, "team1": "Duke", "seed2": 16, "team2": "Bryant" },
+      { "seed1": 8, "team1": "Mississippi", "seed2": 9, "team2": "Boise St." },
+      { "seed1": 5, "team1": "Oregon", "seed2": 12, "team2": "Liberty" },
+      { "seed1": 4, "team1": "Arizona", "seed2": 13, "team2": "Akron" },
+      { "seed1": 6, "team1": "BYU", "seed2": 11, "team2": "VCU" },
+      { "seed1": 3, "team1": "Wisconsin", "seed2": 14, "team2": "Montana" },
+      { "seed1": 7, "team1": "Marquette", "seed2": 10, "team2": "New Mexico" },
+      { "seed1": 2, "team1": "Alabama", "seed2": 15, "team2": "Robert Morris" }
+    ],
+    "South": [
+      { "seed1": 1, "team1": "Auburn", "seed2": 16, "team2": "Alabama St." },
+      { "seed1": 8, "team1": "Louisville", "seed2": 9, "team2": "Creighton" },
+      { "seed1": 5, "team1": "Michigan", "seed2": 12, "team2": "UC San Diego" },
+      { "seed1": 4, "team1": "Texas A&M", "seed2": 13, "team2": "High Point" },
+      { "seed1": 6, "team1": "Missouri", "seed2": 11, "team2": "Drake" },
+      { "seed1": 3, "team1": "Iowa St.", "seed2": 14, "team2": "Lipscomb" },
+      { "seed1": 7, "team1": "Purdue", "seed2": 10, "team2": "St. Peter's" },
+      { "seed1": 2, "team1": "Michigan St.", "seed2": 15, "team2": "Bryant" }
+    ],
+    "West": [
+      { "seed1": 1, "team1": "Florida", "seed2": 16, "team2": "Norfolk St." },
+      { "seed1": 8, "team1": "Connecticut", "seed2": 9, "team2": "Oklahoma" },
+      { "seed1": 5, "team1": "Memphis", "seed2": 12, "team2": "Colorado St." },
+      { "seed1": 4, "team1": "Maryland", "seed2": 13, "team2": "Grand Canyon" },
+      { "seed1": 6, "team1": "Texas", "seed2": 11, "team2": "VCU" },
+      { "seed1": 3, "team1": "Texas Tech", "seed2": 14, "team2": "Montana" },
+      { "seed1": 7, "team1": "Kansas", "seed2": 10, "team2": "Arkansas" },
+      { "seed1": 2, "team1": "St. John's", "seed2": 15, "team2": "Omaha" }
+    ],
+    "Midwest": [
+      { "seed1": 1, "team1": "Houston", "seed2": 16, "team2": "SIU Edwardsville" },
+      { "seed1": 8, "team1": "Gonzaga", "seed2": 9, "team2": "Georgia" },
+      { "seed1": 5, "team1": "Clemson", "seed2": 12, "team2": "McNeese" },
+      { "seed1": 4, "team1": "Tennessee", "seed2": 13, "team2": "Wofford" },
+      { "seed1": 6, "team1": "Illinois", "seed2": 11, "team2": "Xavier" },
+      { "seed1": 3, "team1": "Kentucky", "seed2": 14, "team2": "Troy" },
+      { "seed1": 7, "team1": "UCLA", "seed2": 10, "team2": "Utah St." },
+      { "seed1": 2, "team1": "Kansas", "seed2": 15, "team2": "Omaha" }
+    ]
+  }
+}
