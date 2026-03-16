@@ -27,7 +27,7 @@ export default async function Home() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">March Madness Edge Finder</h1>
         <p className="text-slate-400 text-sm mt-1">
-          KenPom model vs Vegas lines — 2026 NCAA Tournament
+          Bartek model vs Vegas lines — 2026 NCAA Tournament
         </p>
       </div>
       <BracketGrid

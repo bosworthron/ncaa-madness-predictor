@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'March Madness Edge Finder',
-  description: 'KenPom vs Vegas: find the spread and total edges in the 2026 NCAA Tournament',
+  description: 'Bartek model vs Vegas: find the spread and total edges in the 2026 NCAA Tournament',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
