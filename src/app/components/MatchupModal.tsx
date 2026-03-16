@@ -26,11 +26,11 @@ function StatRow({ label, val1, val2, higherIsBetter = true, suffix = '' }: Stat
 
   return (
     <tr className="border-b border-slate-700">
-      <td className={`py-1.5 px-2 text-sm text-right ${team1Better ? 'text-green-400 font-semibold' : 'text-white'}`}>
+      <td className={`py-1.5 px-2 text-sm text-right ${team1Better ? 'text-green-400 font-bold' : 'text-white'}`}>
         {v1.toFixed(1)}{suffix}
       </td>
       <td className="py-1.5 px-2 text-xs text-slate-400 text-center">{label}</td>
-      <td className={`py-1.5 px-2 text-sm text-left ${team2Better ? 'text-green-400 font-semibold' : 'text-white'}`}>
+      <td className={`py-1.5 px-2 text-sm text-left ${team2Better ? 'text-green-400 font-bold' : 'text-white'}`}>
         {v2.toFixed(1)}{suffix}
       </td>
     </tr>
