@@ -78,6 +78,7 @@ function RegionColumn({
 
 export default function BracketGrid({ bracket, odds, oddsError, lastUpdated }: BracketGridProps) {
   const [selectedGame, setSelectedGame] = useState<GameCardData | null>(null);
+  const [showEdges, setShowEdges] = useState(false);
 
   const { regions } = bracket;
 
@@ -87,14 +88,20 @@ export default function BracketGrid({ bracket, odds, oddsError, lastUpdated }: B
     regionCardData[regionName] = matchups.map((m) => buildGameCardData(m, odds));
   }
 
-  const hotGames = Object.values(regionCardData)
-    .flat()
-    .filter((d) => d.prediction && Math.abs(d.prediction.spreadEdge) >= 2.0).length;
+  const allCards = Object.values(regionCardData).flat();
+  const hotGames = allCards.filter((d) => d.prediction && Math.abs(d.prediction.spreadEdge) >= 2.0).length;
+
+  // Top Edges: all games with a prediction, sorted by |spreadEdge| descending
+  const edgeCards = allCards
+    .filter((d): d is GameCardData & { prediction: NonNullable<GameCardData['prediction']> } =>
+      !!d.prediction && d.odds?.spread !== null
+    )
+    .sort((a, b) => Math.abs(b.prediction.spreadEdge) - Math.abs(a.prediction.spreadEdge));
 
   return (
     <div>
       {/* Header bar */}
-      <div className="flex justify-between items-center mb-6 text-sm text-slate-400">
+      <div className="flex justify-between items-center mb-4 text-sm text-slate-400">
         <div>
           {oddsError ? (
             <span className="text-amber-400">⚠ Live odds unavailable ({oddsError})</span>
@@ -102,48 +109,89 @@ export default function BracketGrid({ bracket, odds, oddsError, lastUpdated }: B
             <span>Updated {new Date(lastUpdated).toLocaleTimeString()}</span>
           ) : null}
         </div>
+        <div className="flex items-center gap-4">
+          <span>
+            <span className="text-green-400 font-bold">{hotGames}</span> edges ≥ 2.0
+          </span>
+          <div className="flex rounded-lg overflow-hidden border border-slate-700 text-xs font-bold">
+            <button
+              onClick={() => setShowEdges(false)}
+              className={`px-3 py-1.5 transition-colors ${!showEdges ? 'bg-slate-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+            >
+              By Region
+            </button>
+            <button
+              onClick={() => setShowEdges(true)}
+              className={`px-3 py-1.5 transition-colors ${showEdges ? 'bg-green-700 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+            >
+              Top Edges
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {showEdges ? (
+        /* Top Edges view: all games sorted by |spreadEdge| */
         <div>
-          <span className="text-green-400 font-bold">{hotGames}</span> games with edge ≥ 2.0
+          <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">
+            All games ranked by spread edge — click any game for details
+          </div>
+          {edgeCards.length === 0 ? (
+            <div className="text-slate-500 text-sm">No games with live lines yet.</div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+              {edgeCards.map((cardData) => (
+                <GameCard
+                  key={`${cardData.matchup.team1}-${cardData.matchup.team2}`}
+                  data={cardData}
+                  onClick={() => setSelectedGame(cardData)}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      </div>
+      ) : (
+        /* By Region view */
+        <>
+          {/* East + South pairing */}
+          <div className="mb-8">
+            <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">
+              East / South — Final Four path
+            </div>
+            <div className="flex gap-3">
+              <RegionColumn
+                name="East"
+                cardDataList={regionCardData['East'] ?? []}
+                onSelectGame={setSelectedGame}
+              />
+              <RegionColumn
+                name="South"
+                cardDataList={regionCardData['South'] ?? []}
+                onSelectGame={setSelectedGame}
+              />
+            </div>
+          </div>
 
-      {/* East + South pairing */}
-      <div className="mb-8">
-        <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">
-          East / South — Final Four path
-        </div>
-        <div className="flex gap-3">
-          <RegionColumn
-            name="East"
-            cardDataList={regionCardData['East'] ?? []}
-            onSelectGame={setSelectedGame}
-          />
-          <RegionColumn
-            name="South"
-            cardDataList={regionCardData['South'] ?? []}
-            onSelectGame={setSelectedGame}
-          />
-        </div>
-      </div>
-
-      {/* West + Midwest pairing */}
-      <div>
-        <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">
-          West / Midwest — Final Four path
-        </div>
-        <div className="flex gap-3">
-          <RegionColumn
-            name="West"
-            cardDataList={regionCardData['West'] ?? []}
-            onSelectGame={setSelectedGame}
-          />
-          <RegionColumn
-            name="Midwest"
-            cardDataList={regionCardData['Midwest'] ?? []}
-            onSelectGame={setSelectedGame}
-          />
-        </div>
-      </div>
+          {/* West + Midwest pairing */}
+          <div>
+            <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">
+              West / Midwest — Final Four path
+            </div>
+            <div className="flex gap-3">
+              <RegionColumn
+                name="West"
+                cardDataList={regionCardData['West'] ?? []}
+                onSelectGame={setSelectedGame}
+              />
+              <RegionColumn
+                name="Midwest"
+                cardDataList={regionCardData['Midwest'] ?? []}
+                onSelectGame={setSelectedGame}
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Modal */}
       {selectedGame && (

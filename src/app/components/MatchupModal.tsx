@@ -6,8 +6,9 @@ import { GameCardData, StyleFlag } from '@/types';
 const FLAG_DESCRIPTIONS: Record<StyleFlag, string> = {
   '3PT Exploit': 'One team is a heavy 3PT offense facing poor 3PT defense — expect variance, lean Over',
   'Tempo Clash': 'Teams have significantly different pace preferences (≥5 possession difference)',
-  'Luck Regression': 'One team has been unlucky relative to their efficiency — expect regression toward the model',
+  'Luck Regression': 'One team has been unlucky in close games relative to their efficiency — already factored into the model spread, but Vegas may still be pricing their record',
   'Experience Edge': 'Significant experience gap in a close matchup — favor the veteran team',
+  'Size Mismatch': 'Significant height disparity in a close game — the taller team historically dominates the paint and free throw line in tight tournament games',
 };
 
 interface StatRowProps {
@@ -84,7 +85,7 @@ export default function MatchupModal({ data, onClose }: MatchupModalProps) {
             <div className="bg-slate-800 rounded-lg p-3 mb-4">
               <div className="text-slate-400 text-xs mb-1">Model vs Vegas</div>
               <div className="text-sm text-white">
-                Spread: Model has {matchup.team1} by {Math.abs(prediction.modelSpread).toFixed(1)}{' '}
+                Spread: Model has {prediction.modelSpread >= 0 ? matchup.team1 : matchup.team2} by {Math.abs(prediction.modelSpread).toFixed(1)}{' '}
                 vs Vegas {Math.abs(odds?.spread ?? 0).toFixed(1)} →{' '}
                 <span className={prediction.spreadEdge >= 0 ? 'text-green-400' : 'text-red-400'}>
                   {prediction.spreadEdge >= 0 ? '+' : ''}{prediction.spreadEdge.toFixed(1)} edge
@@ -131,7 +132,7 @@ export default function MatchupModal({ data, onClose }: MatchupModalProps) {
                 {prediction.flags.map((flag) => (
                   <div key={flag} className="bg-slate-800 rounded p-2 text-sm text-slate-300">
                     <span className="mr-1.5">
-                      {flag === '3PT Exploit' ? '🎯' : flag === 'Tempo Clash' ? '⚡' : flag === 'Luck Regression' ? '🍀' : '🎓'}
+                      {flag === '3PT Exploit' ? '🎯' : flag === 'Tempo Clash' ? '⚡' : flag === 'Luck Regression' ? '🍀' : flag === 'Size Mismatch' ? '📏' : '🎓'}
                     </span>
                     <span className="font-medium text-white">{flag}:</span>{' '}
                     {FLAG_DESCRIPTIONS[flag]}

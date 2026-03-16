@@ -19,19 +19,31 @@ export function predictGame(
   vegasSpread: number,
   vegasTotal: number
 ): PredictionResult {
-  // --- Spread ---
-  // modelSpread > 0 means team1 is favored by that many points.
-  const modelSpread = team1.adjEM - team2.adjEM;
+  // Average tempo (possessions per game) — needed for both spread and total
+  const avgT = (team1.adjT + team2.adjT) / 2;
 
-  // vegasSpread < 0 when team1 is favored (e.g. -8.5).
-  // spreadEdge = modelSpread + vegasSpread
-  // Example: modelSpread=14.41, vegasSpread=-8.5 → spreadEdge = 14.41 + (-8.5) = 5.91
+  // --- Spread ---
+  // AdjEM is per 100 possessions. Scale to actual point margin using tempo.
+  // Without this, a 30-pt AdjEM gap looks like a 30-pt model spread when
+  // real games (~67 possessions) would produce ~20 pts — making every favorite
+  // look undervalued and killing any meaningful edge signal.
+  //
+  // Luck adjustment: high-luck teams won more close games than efficiency predicts
+  // and may regress; low-luck teams were unlucky and may be undervalued by Vegas.
+  // Multiplier of 25: luck ±0.05 → ±1.25 AdjEM point adjustment.
+  const LUCK_MULT = 25;
+  const team1EM = team1.adjEM - team1.luck * LUCK_MULT;
+  const team2EM = team2.adjEM - team2.luck * LUCK_MULT;
+
+  const modelSpread = (team1EM - team2EM) * avgT / 100;
+
+  // vegasSpread < 0 when team1 is favored.
+  // spreadEdge > 0 means model thinks team1 is undervalued by Vegas (bet team1).
+  // spreadEdge < 0 means model thinks team2 is undervalued (bet team2 +spread).
   const spreadEdge = modelSpread + vegasSpread;
 
   // --- Total ---
-  // AdjO and AdjD are in points per 100 possessions.
-  // Scale to per-game using the average of both teams' tempo.
-  const avgT = (team1.adjT + team2.adjT) / 2;
+  // AdjO and AdjD are per 100 possessions; scale to per-game using tempo.
   const team1Score = (team1.adjO * team2.adjD / 100) * avgT / 100;
   const team2Score = (team2.adjO * team1.adjD / 100) * avgT / 100;
   const modelTotal = team1Score + team2Score;
@@ -64,6 +76,12 @@ export function predictGame(
   const expGap = Math.abs(team1.expRank - team2.expRank);
   if (expGap >= 100 && Math.abs(spreadEdge) < 3.0) {
     flagSet.add('Experience Edge');
+  }
+
+  // Size Mismatch: significant height rank gap in a close game
+  // heightRank 1 = tallest; gap ≥ 100 ranks = meaningful size advantage
+  if (Math.abs(team1.heightRank - team2.heightRank) >= 100 && Math.abs(spreadEdge) < 5) {
+    flagSet.add('Size Mismatch');
   }
 
   return {

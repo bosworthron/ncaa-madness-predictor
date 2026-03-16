@@ -48,7 +48,8 @@ export type StyleFlag =
   | '3PT Exploit'
   | 'Tempo Clash'
   | 'Luck Regression'
-  | 'Experience Edge';
+  | 'Experience Edge'
+  | 'Size Mismatch';
 
 export interface PredictionResult {
   modelSpread: number;      // positive = team1 favored

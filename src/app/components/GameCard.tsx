@@ -8,6 +8,7 @@ const FLAG_ICONS: Record<StyleFlag, string> = {
   'Tempo Clash': '⚡',
   'Luck Regression': '🍀',
   'Experience Edge': '🎓',
+  'Size Mismatch': '📏',
 };
 
 function EdgeBadge({ label, value }: { label: string; value: number | null }) {
