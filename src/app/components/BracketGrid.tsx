@@ -51,13 +51,11 @@ function buildGameCardData(
 
 function RegionColumn({
   name,
-  matchups,
-  odds,
+  cardDataList,
   onSelectGame,
 }: {
   name: string;
-  matchups: BracketMatchup[];
-  odds: OddsGame[];
+  cardDataList: GameCardData[];
   onSelectGame: (data: GameCardData) => void;
 }) {
   return (
@@ -66,16 +64,13 @@ function RegionColumn({
         {name}
       </h3>
       <div className="flex flex-col gap-2">
-        {matchups.map((matchup, i) => {
-          const cardData = buildGameCardData(matchup, odds);
-          return (
-            <GameCard
-              key={i}
-              data={cardData}
-              onClick={() => onSelectGame(cardData)}
-            />
-          );
-        })}
+        {cardDataList.map((cardData) => (
+          <GameCard
+            key={`${cardData.matchup.team1}-${cardData.matchup.team2}`}
+            data={cardData}
+            onClick={() => onSelectGame(cardData)}
+          />
+        ))}
       </div>
     </div>
   );
@@ -86,9 +81,14 @@ export default function BracketGrid({ bracket, odds, oddsError, lastUpdated }: B
 
   const { regions } = bracket;
 
-  const hotGames = Object.values(regions)
+  // Compute all card data once per region
+  const regionCardData: Record<string, GameCardData[]> = {};
+  for (const [regionName, matchups] of Object.entries(regions)) {
+    regionCardData[regionName] = matchups.map((m) => buildGameCardData(m, odds));
+  }
+
+  const hotGames = Object.values(regionCardData)
     .flat()
-    .map((m) => buildGameCardData(m, odds))
     .filter((d) => d.prediction && Math.abs(d.prediction.spreadEdge) >= 2.0).length;
 
   return (
@@ -115,14 +115,12 @@ export default function BracketGrid({ bracket, odds, oddsError, lastUpdated }: B
         <div className="flex gap-3">
           <RegionColumn
             name="East"
-            matchups={regions['East'] ?? []}
-            odds={odds}
+            cardDataList={regionCardData['East'] ?? []}
             onSelectGame={setSelectedGame}
           />
           <RegionColumn
             name="South"
-            matchups={regions['South'] ?? []}
-            odds={odds}
+            cardDataList={regionCardData['South'] ?? []}
             onSelectGame={setSelectedGame}
           />
         </div>
@@ -136,14 +134,12 @@ export default function BracketGrid({ bracket, odds, oddsError, lastUpdated }: B
         <div className="flex gap-3">
           <RegionColumn
             name="West"
-            matchups={regions['West'] ?? []}
-            odds={odds}
+            cardDataList={regionCardData['West'] ?? []}
             onSelectGame={setSelectedGame}
           />
           <RegionColumn
             name="Midwest"
-            matchups={regions['Midwest'] ?? []}
-            odds={odds}
+            cardDataList={regionCardData['Midwest'] ?? []}
             onSelectGame={setSelectedGame}
           />
         </div>

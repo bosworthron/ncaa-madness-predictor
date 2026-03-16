@@ -1,6 +1,6 @@
 // src/app/page.tsx
 import BracketGrid from '@/app/components/BracketGrid';
-import { fetchOdds } from '@/app/api/odds/route';
+import { fetchOdds } from '@/lib/odds';
 import bracketRaw from '../../data/bracket.json';
 import { BracketData, OddsGame } from '@/types';
 

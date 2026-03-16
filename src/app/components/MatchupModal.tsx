@@ -65,9 +65,9 @@ export default function MatchupModal({ data, onClose }: MatchupModalProps) {
                 <span className="text-slate-400 mx-2">vs</span>
                 ({matchup.seed2}) {matchup.team2}
               </div>
-              {odds && (
+              {odds && odds.spread !== null && (
                 <div className="text-slate-400 text-sm mt-0.5">
-                  Vegas: {matchup.team1} {odds.spread! > 0 ? '+' : ''}{odds.spread} | O/U {odds.total}
+                  Vegas: {matchup.team1} {odds.spread > 0 ? '+' : ''}{odds.spread} | O/U {odds.total}
                 </div>
               )}
             </div>
