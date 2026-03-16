@@ -8,6 +8,12 @@ const ODDS_API_BASE = 'https://api.the-odds-api.com/v4/sports/basketball_ncaab/o
 // Module-level stale cache — populated on every successful fetch, used as fallback
 // on API errors. Works regardless of whether fetchOdds is called via HTTP GET
 // or imported directly by page.tsx.
+//
+// NOTE: These variables only persist within a single Node.js process instance.
+// On Vercel serverless, every cold start resets them to null. The primary cache
+// is `unstable_cache` below with a 60-minute revalidation window. These vars are
+// a secondary within-instance fallback used only for 401/429 error recovery when
+// a warm instance already has a prior successful response in memory.
 let lastGoodGames: OddsGame[] | null = null;
 export let lastGoodTimestamp: string | null = null;
 
@@ -15,6 +21,9 @@ async function fetchFromApi(): Promise<OddsGame[]> {
   const apiKey = process.env.ODDS_API_KEY;
   if (!apiKey) throw new Error('ODDS_API_KEY environment variable is not set');
 
+  // The Odds API requires the key as a query parameter — this is their mandated
+  // authentication format. Because fetchFromApi runs exclusively server-side, the
+  // key is never exposed to the browser or included in any client bundle.
   const url = `${ODDS_API_BASE}?regions=us&markets=spreads,totals&apiKey=${apiKey}`;
   const res = await fetch(url);
 
@@ -78,7 +87,9 @@ export async function fetchOdds(): Promise<{ games: OddsGame[]; stale?: boolean;
     if (lastGoodGames && (message === 'invalid_key' || message === 'rate_limited')) {
       return { games: lastGoodGames, stale: true };
     }
-    const knownErrors = ['invalid_key', 'rate_limited', 'missing_key'];
+    // 'missing_key' was removed — a missing ODDS_API_KEY throws a plain English
+    // message that won't match any code string; it correctly falls through to 'unavailable'.
+    const knownErrors = ['invalid_key', 'rate_limited'];
     const errorCode = knownErrors.find((e) => message.includes(e)) ?? 'unavailable';
     return { games: [], error: errorCode };
   }

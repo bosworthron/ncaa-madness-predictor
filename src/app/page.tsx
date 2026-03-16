@@ -6,18 +6,21 @@ import { BracketData, OddsGame } from '@/types';
 
 const bracket = bracketRaw as BracketData;
 
-async function getOdds(): Promise<{ games: OddsGame[]; error?: string; lastUpdated?: string }> {
+async function getOdds(): Promise<{ games: OddsGame[]; error?: string; lastUpdated?: string; stale?: boolean }> {
   // fetchOdds never throws — returns { games, error?, stale? }
   const result = await fetchOdds();
   return {
     games: result.games,
     error: result.error,
-    lastUpdated: new Date().toISOString(),
+    stale: result.stale,
+    // When serving stale data, don't claim a fresh timestamp — the data's age is
+    // unknown, so omit lastUpdated entirely and let the error state drive the UI.
+    lastUpdated: result.stale ? undefined : new Date().toISOString(),
   };
 }
 
 export default async function Home() {
-  const { games, error, lastUpdated } = await getOdds();
+  const { games, error, lastUpdated, stale } = await getOdds();
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
@@ -30,7 +33,7 @@ export default async function Home() {
       <BracketGrid
         bracket={bracket}
         odds={games}
-        oddsError={error}
+        oddsError={error ?? (stale ? 'stale data' : undefined)}
         lastUpdated={lastUpdated}
       />
     </main>
