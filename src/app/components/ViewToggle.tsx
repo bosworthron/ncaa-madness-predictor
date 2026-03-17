@@ -4,6 +4,7 @@ import { useState } from 'react';
 import BracketGrid from './BracketGrid';
 import BracketProjection from './BracketProjection';
 import BozProjection from './BozProjection';
+import LeoProjection from './LeoProjection';
 import { BracketData, OddsGame } from '@/types';
 import { TournamentProjection } from '@/types/simulation';
 
@@ -14,12 +15,13 @@ interface ViewToggleProps {
   lastUpdated?: string;
   projection: TournamentProjection;      // Bartek model (AdjEM-based)
   bozProjection: TournamentProjection;   // Boz model (KenPom rank-based)
+  leoProjection: TournamentProjection;   // Leo model (Bracket Matrix-based)
 }
 
-type View = 'lines' | 'bracket' | 'boz';
+type View = 'lines' | 'bracket' | 'boz' | 'leo';
 
 export default function ViewToggle({
-  bracket, odds, oddsError, lastUpdated, projection, bozProjection,
+  bracket, odds, oddsError, lastUpdated, projection, bozProjection, leoProjection,
 }: ViewToggleProps) {
   const [view, setView] = useState<View>('lines');
 
@@ -41,6 +43,7 @@ export default function ViewToggle({
         {tab('lines',   'Live Lines')}
         {tab('bracket', 'Bartek Model')}
         {tab('boz',     'Boz Model')}
+        {tab('leo',     'Leo Model')}
       </div>
 
       {view === 'lines' ? (
@@ -52,8 +55,10 @@ export default function ViewToggle({
         />
       ) : view === 'bracket' ? (
         <BracketProjection projection={projection} />
-      ) : (
+      ) : view === 'boz' ? (
         <BozProjection projection={bozProjection} />
+      ) : (
+        <LeoProjection projection={leoProjection} />
       )}
     </div>
   );

@@ -3,6 +3,7 @@ import ViewToggle from '@/app/components/ViewToggle';
 import { fetchOdds } from '@/lib/odds';
 import { simulateTournament } from '@/lib/simulate';
 import { simulateTournamentByRank } from '@/lib/simulate-boz';
+import { simulateTournamentByLeo } from '@/lib/simulate-leo';
 import bracketRaw from '../../data/bracket.json';
 import { BracketData, OddsGame } from '@/types';
 
@@ -22,6 +23,7 @@ export default async function Home() {
   const { games, error, lastUpdated, stale } = await getOdds();
   const projection    = simulateTournament(bracket);
   const bozProjection = simulateTournamentByRank(bracket);
+  const leoProjection = simulateTournamentByLeo(bracket);
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
@@ -38,6 +40,7 @@ export default async function Home() {
         lastUpdated={lastUpdated}
         projection={projection}
         bozProjection={bozProjection}
+        leoProjection={leoProjection}
       />
     </main>
   );
