@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import BracketGrid from './BracketGrid';
 import BracketProjection from './BracketProjection';
+import BozProjection from './BozProjection';
 import { BracketData, OddsGame } from '@/types';
 import { TournamentProjection } from '@/types/simulation';
 
@@ -11,36 +12,35 @@ interface ViewToggleProps {
   odds: OddsGame[];
   oddsError?: string;
   lastUpdated?: string;
-  projection: TournamentProjection;
+  projection: TournamentProjection;      // Bartek model (AdjEM-based)
+  bozProjection: TournamentProjection;   // Boz model (KenPom rank-based)
 }
 
-export default function ViewToggle({ bracket, odds, oddsError, lastUpdated, projection }: ViewToggleProps) {
-  const [view, setView] = useState<'lines' | 'bracket'>('lines');
+type View = 'lines' | 'bracket' | 'boz';
+
+export default function ViewToggle({
+  bracket, odds, oddsError, lastUpdated, projection, bozProjection,
+}: ViewToggleProps) {
+  const [view, setView] = useState<View>('lines');
+
+  const tab = (v: View, label: string) => (
+    <button
+      onClick={() => setView(v)}
+      className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+        view === v ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-white'
+      }`}
+    >
+      {label}
+    </button>
+  );
 
   return (
     <div>
       {/* Tab bar */}
       <div className="flex gap-1 mb-6 bg-slate-800 rounded-lg p-1 w-fit">
-        <button
-          onClick={() => setView('lines')}
-          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-            view === 'lines'
-              ? 'bg-slate-600 text-white'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          Live Lines
-        </button>
-        <button
-          onClick={() => setView('bracket')}
-          className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-            view === 'bracket'
-              ? 'bg-slate-600 text-white'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          Projected Bracket
-        </button>
+        {tab('lines',   'Live Lines')}
+        {tab('bracket', 'Bartek Model')}
+        {tab('boz',     'Boz Model')}
       </div>
 
       {view === 'lines' ? (
@@ -50,8 +50,10 @@ export default function ViewToggle({ bracket, odds, oddsError, lastUpdated, proj
           oddsError={oddsError}
           lastUpdated={lastUpdated}
         />
-      ) : (
+      ) : view === 'bracket' ? (
         <BracketProjection projection={projection} />
+      ) : (
+        <BozProjection projection={bozProjection} />
       )}
     </div>
   );

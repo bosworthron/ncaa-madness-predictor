@@ -1,8 +1,8 @@
 // src/app/page.tsx
-import BracketProjection from '@/app/components/BracketProjection';
 import ViewToggle from '@/app/components/ViewToggle';
 import { fetchOdds } from '@/lib/odds';
 import { simulateTournament } from '@/lib/simulate';
+import { simulateTournamentByRank } from '@/lib/simulate-boz';
 import bracketRaw from '../../data/bracket.json';
 import { BracketData, OddsGame } from '@/types';
 
@@ -20,7 +20,8 @@ async function getOdds(): Promise<{ games: OddsGame[]; error?: string; lastUpdat
 
 export default async function Home() {
   const { games, error, lastUpdated, stale } = await getOdds();
-  const projection = simulateTournament(bracket);
+  const projection    = simulateTournament(bracket);
+  const bozProjection = simulateTournamentByRank(bracket);
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
@@ -36,6 +37,7 @@ export default async function Home() {
         oddsError={error ?? (stale ? 'stale data' : undefined)}
         lastUpdated={lastUpdated}
         projection={projection}
+        bozProjection={bozProjection}
       />
     </main>
   );

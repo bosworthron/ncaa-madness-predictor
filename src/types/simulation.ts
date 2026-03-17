@@ -4,6 +4,7 @@ export interface ProjectedTeam {
   adjEM: number | null;
   luck: number | null;
   adjT: number | null;
+  rank: number | null;   // KenPom ranking (1 = best)
 }
 
 export interface ProjectedGame {

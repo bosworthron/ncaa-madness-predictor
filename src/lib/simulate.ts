@@ -10,6 +10,7 @@ function makeTeam(name: string, seed: number): ProjectedTeam {
     adjEM: stats?.adjEM ?? null,
     luck: stats?.luck ?? null,
     adjT: stats?.adjT ?? null,
+    rank: stats?.rank ?? null,
   };
 }
 
