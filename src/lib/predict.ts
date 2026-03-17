@@ -1,5 +1,6 @@
 // src/lib/predict.ts
 import { TeamStats, PredictionResult, StyleFlag } from '@/types';
+import { LEAGUE_AVG_D } from '@/lib/teams';
 
 /**
  * Predict the outcome of a neutral-site game.
@@ -43,9 +44,14 @@ export function predictGame(
   const spreadEdge = modelSpread + vegasSpread;
 
   // --- Total ---
-  // AdjO and AdjD are per 100 possessions; scale to per-game using tempo.
-  const team1Score = (team1.adjO * team2.adjD / 100) * avgT / 100;
-  const team2Score = (team2.adjO * team1.adjD / 100) * avgT / 100;
+  // AdjO is points scored per 100 possessions.
+  // AdjD is points allowed per 100 possessions vs average competition.
+  // Our dataset's average AdjD is ~109.4 (not 100), so dividing by 100 treats a
+  // below-average defense as a multiplier >1 — double-inflating the total.
+  // Normalizing by LEAGUE_AVG_D corrects this, bringing model totals in line
+  // with Vegas O/U (~145-150 for tournament games).
+  const team1Score = team1.adjO * (team2.adjD / LEAGUE_AVG_D) * avgT / 100;
+  const team2Score = team2.adjO * (team1.adjD / LEAGUE_AVG_D) * avgT / 100;
   const modelTotal = team1Score + team2Score;
   const totalEdge = modelTotal - vegasTotal;
 
