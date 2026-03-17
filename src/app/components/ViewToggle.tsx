@@ -5,6 +5,7 @@ import BracketGrid from './BracketGrid';
 import BracketProjection from './BracketProjection';
 import BozProjection from './BozProjection';
 import LeoProjection from './LeoProjection';
+import UpsetsTab from './UpsetsTab';
 import { BracketData, OddsGame } from '@/types';
 import { TournamentProjection } from '@/types/simulation';
 
@@ -18,7 +19,7 @@ interface ViewToggleProps {
   leoProjection: TournamentProjection;   // Leo model (Bracket Matrix-based)
 }
 
-type View = 'lines' | 'bracket' | 'boz' | 'leo';
+type View = 'lines' | 'bracket' | 'boz' | 'leo' | 'upsets';
 
 export default function ViewToggle({
   bracket, odds, oddsError, lastUpdated, projection, bozProjection, leoProjection,
@@ -44,6 +45,7 @@ export default function ViewToggle({
         {tab('bracket', 'Bartek Model')}
         {tab('boz',     'Boz Model')}
         {tab('leo',     'Leo Model')}
+        {tab('upsets',  'Upset Picks')}
       </div>
 
       {view === 'lines' ? (
@@ -57,8 +59,15 @@ export default function ViewToggle({
         <BracketProjection projection={projection} />
       ) : view === 'boz' ? (
         <BozProjection projection={bozProjection} />
-      ) : (
+      ) : view === 'leo' ? (
         <LeoProjection projection={leoProjection} />
+      ) : (
+        <UpsetsTab
+          bracket={bracket}
+          bartekProjection={projection}
+          bozProjection={bozProjection}
+          leoProjection={leoProjection}
+        />
       )}
     </div>
   );
